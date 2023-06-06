@@ -3,16 +3,27 @@ const { pool } = require('../../conection')
 async function createExpense(req, res) {
   const userId = req.user.userId;
 
-  const { group_id, amount, description, date } = req.body;
+  const { group_id, amount, description, date, email } = req.body;
 
   try {
-    const result =  await pool.query(
-      'INSERT INTO expenses (group_id, user_id, amount, description, date) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [group_id, userId, amount, description, date]
+    const user = await pool.query(
+      'SELECT * FROM users WHERE email = $1',
+      [email]
     );
-    const expense = result.rows[0]
-  
-    res.status(200).json({ data: expense });
+
+    if (user.rows.length > 0) {
+      const result =  await pool.query(
+        'INSERT INTO expenses (group_id, user_id, amount, description, date) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+        [group_id, user.rows[0].id, amount, description, date]
+      );
+      const expense = result.rows[0]
+    
+      res.status(200).json({ data: expense });
+    } else {
+      res.status(401).json({ message: 'User not found' });
+    }
+
+    
 
   } catch(err) {
     res.status(400).json({ message: "Error creating expense", error: err });
@@ -125,10 +136,38 @@ async function deleteExpense(req, res) {
 
 }
 
+async function getExpensesByGroupId(req, res) {
+  const { id } = req.params;
+  let expenses = []
+  try {
+    const result = await pool.query(
+      'SELECT * FROM expenses WHERE group_id = $1',
+      [id]
+    );
+
+    for (const expense of result.rows) {
+      const user = await pool.query(
+        'SELECT * FROM users WHERE id = $1',
+        [expense.user_id]
+      );
+
+      if (user) {
+        expenses.push({...expense, expense_owner_email: user.rows[0].email});
+      }
+    }
+
+    res.status(200).json({ data: expenses });
+  } catch (err) {
+    res.status(400).json({ message: 'Error getting expenses by group ID', error: err });
+  }
+}
+
 module.exports = {
   create: createExpense,
   getAll: getExpenses,
   getById: getExpenseById,
   update: updateExpense,
   delete: deleteExpense,
+  getByGroupId: getExpensesByGroupId,
+
 };

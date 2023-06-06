@@ -37,6 +37,7 @@ app.delete('/groups/:id', authenticateJWT, controllers.groups.delete);
 app.post('/expenses', authenticateJWT, controllers.expenses.create);
 app.get('/expenses', authenticateJWT, controllers.expenses.getAll);
 app.get('/expenses/:id', authenticateJWT, controllers.expenses.getById);
+app.get('/expenses/group/:id', authenticateJWT, controllers.expenses.getByGroupId);
 app.put('/expenses/:id', authenticateJWT, controllers.expenses.update);
 app.delete('/expenses/:id', authenticateJWT, controllers.expenses.delete);
 
