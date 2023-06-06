@@ -16,7 +16,8 @@ async function createUserController(req, res) {
       [name, email, password]
     );
     if (user) {
-      return res.status(200).json({ data: user }); 
+      const token = jwt.sign({ userId: user.rows[0].id }, secretKey);
+      return res.status(200).json({ data: token }); 
     }
   } catch (err) {
     return res.status(404).json({ message: 'Error creating user', error: err });
