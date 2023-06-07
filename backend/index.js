@@ -21,6 +21,7 @@ app.post('/users', controllers.users.create);
 app.post('/users/login', controllers.users.login);
 app.get('/users/me', authenticateJWT, controllers.users.getUser);
 app.put('/users/me', authenticateJWT, controllers.users.editUser);
+app.post('/users/recover_password', controllers.users.recoverPassword);
 
 // groups
 app.post('/groups', authenticateJWT, controllers.groups.create);

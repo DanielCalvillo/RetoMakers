@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { API } from './utils/consts';
+import { API } from '../utils/consts';
 
-const Login = () => {
+const RecoverPassword = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -14,28 +15,28 @@ const Login = () => {
     setPassword(event.target.value);
   };
 
+  const handleConfirmPasswordChange = (event) => {
+    setConfirmPassword(event.target.value);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post(`${API}/users/login`, { email, password });
-      const token = response.data.data.token;
-      // Almacena el token en el localStorage
-      localStorage.setItem('token', token);
-      // Redirige a la página principal
-      window.location.href = '/groupList';
+      if (password === confirmPassword) {
+        const response = await axios.post(`${API}/users/recover_password`, {
+          email,
+          newPassword: password
+        });
+        console.log('Password recovery successful:', response.data);
+        // Redirige a la página de inicio de sesión
+        window.location.href = '/';
+
+      } else {
+        console.error('Las contraseñas no coinciden')
+      }
     } catch (error) {
-      console.error('Error al iniciar sesión:', error);
+      console.error('Error en la recuperación de contraseña:', error);
     }
-  };
-
-  const handleRegister = () => {
-    // Redirige al formulario de registro
-    window.location.href = '/register';
-  };
-
-  const handleRecoverPassword = () => {
-    // Redirige a la página de recuperar contraseña
-    window.location.href = '/recover_password';
   };
 
   return (
@@ -56,17 +57,31 @@ const Login = () => {
               required
             />
           </div>
-          <div className="mb-6">
+          <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
-              Password
+              New Password
             </label>
             <input
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="password"
               type="password"
-              placeholder="Password"
+              placeholder="New Password"
               value={password}
               onChange={handlePasswordChange}
+              required
+            />
+          </div>
+          <div className="mb-6">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirmPassword">
+              Confirm New Password
+            </label>
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="confirmPassword"
+              type="password"
+              placeholder="Confirm New Password"
+              value={confirmPassword}
+              onChange={handleConfirmPasswordChange}
               required
             />
           </div>
@@ -75,26 +90,13 @@ const Login = () => {
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit"
             >
-              Sign In
-            </button>
-            <button
-              className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              type="button"
-              onClick={handleRegister}
-            >
-              Register
+              Recover Password
             </button>
           </div>
-          <p className="text-gray-500 text-sm text-center mt-2">
-            <span className="cursor-pointer underline" onClick={handleRecoverPassword}>
-              Forgot Password
-            </span>
-          </p>
         </form>
       </div>
     </div>
   );
 };
 
-export default Login;
-
+export default RecoverPassword;

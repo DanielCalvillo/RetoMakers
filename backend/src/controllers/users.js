@@ -93,6 +93,26 @@ async function editUser(req, res) {
   }
 }
 
+async function recoverPassword(req, res) {
+  const { email, newPassword } = req.body;
+
+  try {
+    // Verificar si el usuario existe en la base de datos
+    const user = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+
+    if (user.rows.length > 0) {
+      // Actualizar la contraseña del usuario
+      await pool.query('UPDATE users SET password = $1 WHERE email = $2', [newPassword, email]);
+
+      res.status(200).json({ message: 'Password recovery successful' });
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (err) {
+    res.status(500).json({ message: 'Error recovering password', error: err });
+  }
+}
+
 async function getUserData(req, res) {
   const userId = req.user.userId;
 
@@ -116,4 +136,5 @@ module.exports = {
   login: loginUser,
   editUser: editUser,
   getUser: getUserData,
+  recoverPassword: recoverPassword
 };
