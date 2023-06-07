@@ -334,16 +334,16 @@ function GroupDetails() {
             <h3 className="text-lg font-semibold mt-8">Expenses</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
               {expenses.map((expense) => (
-                <div key={expense.id} className="bg-gray-100 p-4 rounded-lg shadow">
+                <div className="bg-gray-100 p-4 rounded-lg shadow cursor-pointer" key={expense.id} onClick={() => console.log(expense)}>
                   <h4 className="text-lg font-semibold mb-2">{expense.description}</h4>
                   <p className="text-gray-500 mb-2">Amount: ${expense.amount}</p>
                   <p className="text-gray-500 mb-2">Owner: {expense.expense_owner_email}</p>
-                  <button
+                  {/* <button
                     className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md mt-2"
                     onClick={() => handleDeleteExpense(expense)}
                   >
                     Delete
-                  </button>
+                  </button> */}
                 </div>
               ))}
             </div>

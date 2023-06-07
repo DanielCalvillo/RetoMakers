@@ -21,7 +21,7 @@ const Navbar = () => {
               Inicio
             </a>
             <a
-              href="/groupList"
+              href="/groups"
               className="text-gray-300 hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
             >
               Grupos

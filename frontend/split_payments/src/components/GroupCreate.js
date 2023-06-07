@@ -30,7 +30,7 @@ function GroupCreate() {
 
       console.log('New group created:', response.data);
       // history.push('/groups');
-      navigate('/groupList')
+      navigate('/groups')
     } catch (error) {
       console.error('Error creating group:', error);
     }

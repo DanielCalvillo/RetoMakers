@@ -22,6 +22,7 @@ const Login = () => {
       // Almacena el token en el localStorage
       localStorage.setItem('token', token);
       // Redirige a la página principal
+      // TODO: Redireccionar con React Router no con windows
       window.location.href = '/groupList';
     } catch (error) {
       console.error('Error al iniciar sesión:', error);

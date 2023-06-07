@@ -32,7 +32,7 @@ const Register = () => {
         // Almacena el token en el localStorage
         localStorage.setItem('token', token);
         // Redirige a la página principal
-        window.location.href = '/groupLists';
+        window.location.href = '/groups';
       } else {
         // Registro fallido
         console.error('Error al registrar');

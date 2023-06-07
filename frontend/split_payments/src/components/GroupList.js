@@ -25,7 +25,7 @@ function GroupList() {
   };
 
   const handleGroupClick = (groupId) => {
-    navigate(`/groupList/${groupId}`)
+    navigate(`/groups/${groupId}`)
   };
 
   return (

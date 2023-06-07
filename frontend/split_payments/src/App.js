@@ -5,25 +5,24 @@ import GroupLists from './components/GroupList';
 import GroupDetails from './components/GroupDetails';
 import GroupCreate from './components/GroupCreate';
 import RecoverPassword from './components/RecoverPassword'
+import ExpensesDetails from './components/ExpensesDetails';
 import axios from 'axios';
 
 const App = () => {
   const token = localStorage.getItem('token');
   axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   return (
-      <div>
-
         <Routes>
           <Route path='/' element={<Login />} />
           <Route path='/register' element={<Register />} />
           <Route path='/recover_password' element={<RecoverPassword />} />
           <Route element={<ProtectedRoute token={token} />} >
-            <Route path='/groupList' element={<GroupLists />} />
-            <Route path='/groupList/:id' element={<GroupDetails />} />
+            <Route path='/groups' element={<GroupLists />} />
+            <Route path='/groups/:id' element={<GroupDetails />} />
             <Route path='/groups/create' element={<GroupCreate />} />
+            <Route path="/expenses/:id" element={<ExpensesDetails />} />
           </Route>
         </Routes>
-      </div>
   );
 };
 
