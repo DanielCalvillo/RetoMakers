@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import 'tailwindcss/tailwind.css';
 import axios from 'axios';
 import Navbar from './Navbar';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 
 import Modal from 'react-modal';
 
@@ -139,20 +139,21 @@ function GroupDetails() {
   const { id } = useParams();
 
   useEffect(() => {
+    const fetchGroup = async () => {
+      try {
+        const response = await axios.get(`${API}/groups/${id}`);
+        setGroup(response.data.data);
+      } catch (error) {
+        console.error('Error fetching group:', error);
+      }
+    };
+
     fetchGroup();
     fetchGroupMembers();
     fetchGroupExpenses();
   }, []);
 
-  const fetchGroup = async () => {
-    try {
-      const response = await axios.get(`${API}/groups/${id}`);
-      console.log(response.data);
-      setGroup(response.data.data);
-    } catch (error) {
-      console.error('Error fetching group:', error);
-    }
-  };
+
 
   const fetchGroupMembers = async () => {
     const members = await getAllGroupMembers(id);
@@ -242,7 +243,6 @@ function GroupDetails() {
 
   return (
     <div>
-      <Navbar />
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="bg-white overflow-hidden shadow rounded-lg">
           <div className="px-4 py-5 sm:p-6">
@@ -334,17 +334,19 @@ function GroupDetails() {
             <h3 className="text-lg font-semibold mt-8">Expenses</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
               {expenses.map((expense) => (
-                <div className="bg-gray-100 p-4 rounded-lg shadow cursor-pointer" key={expense.id} onClick={() => console.log(expense)}>
-                  <h4 className="text-lg font-semibold mb-2">{expense.description}</h4>
-                  <p className="text-gray-500 mb-2">Amount: ${expense.amount}</p>
-                  <p className="text-gray-500 mb-2">Owner: {expense.expense_owner_email}</p>
-                  {/* <button
-                    className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md mt-2"
-                    onClick={() => handleDeleteExpense(expense)}
-                  >
-                    Delete
-                  </button> */}
-                </div>
+                <Link key={expense.id} to={`/expenses/${expense.id}`}>
+                  <div className="bg-gray-100 p-4 rounded-lg shadow cursor-pointer">
+                    <h4 className="text-lg font-semibold mb-2">{expense.description}</h4>
+                    <p className="text-gray-500 mb-2">Amount: ${expense.amount}</p>
+                    <p className="text-gray-500 mb-2">Owner: {expense.expense_owner_email}</p>
+                    {/* <button
+                      className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md mt-2"
+                      onClick={() => handleDeleteExpense(expense)}
+                    >
+                      Delete
+                    </button> */}
+                  </div>
+                </Link>
               ))}
             </div>
 

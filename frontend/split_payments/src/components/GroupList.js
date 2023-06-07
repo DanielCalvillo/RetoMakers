@@ -30,7 +30,6 @@ function GroupList() {
 
   return (
     <div>
-      <Navbar />
       <div className="max-w-6xl mx-auto px-4 mt-4">
         <div className='flex items-center justify-between'>
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Grupos</h2>

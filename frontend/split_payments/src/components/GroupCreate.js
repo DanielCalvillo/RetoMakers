@@ -38,7 +38,6 @@ function GroupCreate() {
 
   return (
     <div>
-      <Navbar />
       <div className="max-w-6xl mx-auto px-4 mt-4">
         <h2 className="text-2xl font-bold text-gray-800 mb-2">Crear nuevo grupo</h2>
         <form onSubmit={handleSubmit}>
