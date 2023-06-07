@@ -2,15 +2,30 @@ const { pool } = require('../../conection')
 
 
 async function createDebt(req, res) {
-  const { debtor_id, creditor_id, amount } = req.body;
+  const { debtor_email, creditor_email, amount, expense_id } = req.body;
+  
 
   try {
-    const result = await pool.query(
-      'INSERT INTO debts (debtor_id, creditor_id, amount) VALUES ($1, $2, $3) RETURNING *',
-      [debtor_id, creditor_id, amount]
+    const creditor = await pool.query(
+      'SELECT * FROM users WHERE email = $1',
+      [creditor_email]
     );
 
-    res.send(result.rows[0]);
+    const debtor = await pool.query(
+      'SELECT * FROM users WHERE email = $1',
+      [debtor_email]
+    );
+
+    if (creditor.rows.length > 0 && debtor.rows.length) {
+      const result = await pool.query(
+        'INSERT INTO debts (debtor_id, creditor_id, amount, expense_id) VALUES ($1, $2, $3, $4) RETURNING *',
+        [debtor.rows[0].id, creditor.rows[0].id, amount, expense_id]
+      );
+      res.status(201).json({ data: result.rows[0] });
+    } else {
+      res.status(401).json({ message: 'User not found' });
+
+    }
   } catch (err) {
     res.status(404).json({ message: 'Error creating debt', error: err });
   }
