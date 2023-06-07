@@ -6,6 +6,8 @@ import { useParams } from 'react-router-dom';
 
 import Modal from 'react-modal';
 
+import { API } from '../utils/consts';
+
 Modal.setAppElement('#root');
 
 const customModalStyles = {
@@ -34,7 +36,7 @@ const customModalStyles = {
 
 async function createGroupMember(groupId, email, setErrorMessage) {
   try {
-    const response = await axios.post(`http://localhost:3001/groups/${groupId}/members`, {
+    const response = await axios.post(`${API}/groups/${groupId}/members`, {
       email,
     });
 
@@ -53,7 +55,7 @@ async function createGroupMember(groupId, email, setErrorMessage) {
 
 async function getAllGroupMembers(groupId) {
   try {
-    const response = await axios.get(`http://localhost:3001/groups/${groupId}/members`);
+    const response = await axios.get(`${API}/groups/${groupId}/members`);
     const members = response.data.data;
     return members;
   } catch (error) {
@@ -64,7 +66,7 @@ async function getAllGroupMembers(groupId) {
 
 async function deleteGroupMember(groupId, email) {
   try {
-    await axios.delete(`http://localhost:3001/groups/${groupId}/members`, {
+    await axios.delete(`${API}/groups/${groupId}/members`, {
       data: { email },
     });
     console.log('Group member deleted successfully');
@@ -75,7 +77,7 @@ async function deleteGroupMember(groupId, email) {
 
 async function createExpense(groupId, amount, description, date, creatorEmail, setErrorMessage, resetExpenseData) {
   try {
-    const response = await axios.post(`http://localhost:3001/expenses`, {
+    const response = await axios.post(`${API}/expenses`, {
       group_id: groupId,
       amount,
       description,
@@ -100,7 +102,7 @@ async function createExpense(groupId, amount, description, date, creatorEmail, s
 
 async function getExpensesByGroupId(groupId) {
   try {
-    const response = await axios.get(`http://localhost:3001/expenses/group/${groupId}`);
+    const response = await axios.get(`${API}/expenses/group/${groupId}`);
     const expenses = response.data.data;
     return expenses;
   } catch (error) {
@@ -111,7 +113,7 @@ async function getExpensesByGroupId(groupId) {
 
 async function getExpenseDebts(expenseId) {
   try {
-    const response = await axios.get(`http://localhost:3001/expenses/${expenseId}/debts`);
+    const response = await axios.get(`${API}/expenses/${expenseId}/debts`);
     const debts = response.data.data;
     return debts;
   } catch (error) {
@@ -144,7 +146,7 @@ function GroupDetails() {
 
   const fetchGroup = async () => {
     try {
-      const response = await axios.get(`http://localhost:3001/groups/${id}`);
+      const response = await axios.get(`${API}/groups/${id}`);
       console.log(response.data);
       setGroup(response.data.data);
     } catch (error) {
@@ -231,7 +233,7 @@ function GroupDetails() {
 
   const deleteExpense = async (expenseId) => {
     try {
-      await axios.delete(`http://localhost:3001/expenses/${expenseId}`);
+      await axios.delete(`${API}/expenses/${expenseId}`);
       console.log('Expense deleted successfully');
     } catch (error) {
       console.error('Error deleting expense:', error);

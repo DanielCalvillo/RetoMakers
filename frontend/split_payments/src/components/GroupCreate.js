@@ -3,6 +3,7 @@ import 'tailwindcss/tailwind.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
+import { API } from '../utils/consts';
 
 function GroupCreate() {
   const [name, setName] = useState('');
@@ -22,7 +23,7 @@ function GroupCreate() {
     event.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:3001/groups', {
+      const response = await axios.post(`${API}/groups`, {
         name,
         description,
       });

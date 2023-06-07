@@ -4,6 +4,8 @@ import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import Navbar from './Navbar';
 
+import { API } from '../utils/consts';
+
 function GroupList() {
   const [groups, setGroups] = useState([]);
   const navigate = useNavigate()
@@ -15,7 +17,7 @@ function GroupList() {
 
   const fetchGroups = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/groups');
+      const response = await axios.get(`${API}/groups`);
       setGroups(response.data.data);
     } catch (error) {
       console.error('Error fetching groups:', error);
