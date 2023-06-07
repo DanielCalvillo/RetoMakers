@@ -56,13 +56,13 @@ async function createDebt(req, res) {
   }
 }
 
-async function getDebts(req, res) {
-  const userId = req.user.userId;
+async function getDebtsByExpense(req, res) {
+  const { id } = req.params;
 
   try {
     const result = await pool.query(
-      'SELECT * FROM debts WHERE debtor_id = $1 OR creditor_id = $1',
-      [userId]
+      'SELECT * FROM debts WHERE expense_id = $1',
+      [id]
     );
 
     res.send(result.rows);
@@ -125,7 +125,7 @@ async function deleteDebt(req, res) {
 
 module.exports = {
   create: createDebt,
-  getAll: getDebts,
+  getAll: getDebtsByExpense,
   getById: getDebtById,
   update: updateDebt,
   delete: deleteDebt,

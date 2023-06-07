@@ -41,7 +41,7 @@ app.delete('/expenses/:id', authenticateJWT, controllers.expenses.delete);
 // debts
 
 app.post('/debts', authenticateJWT, controllers.debts.create);
-app.get('/debts', authenticateJWT, controllers.debts.getAll);
+app.get('/debts/expense/:id', authenticateJWT, controllers.debts.getAll);
 app.get('/debts/:id', authenticateJWT, controllers.debts.getById);
 app.put('/debts/:id', authenticateJWT, controllers.debts.update);
 app.delete('/debts/:id', authenticateJWT, controllers.debts.delete);
