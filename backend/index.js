@@ -34,16 +34,17 @@ app.delete('/groups/:id', authenticateJWT, controllers.groups.delete);
 app.post('/expenses', authenticateJWT, controllers.expenses.create);
 app.get('/expenses', authenticateJWT, controllers.expenses.getAll);
 app.get('/expenses/:id', authenticateJWT, controllers.expenses.getById);
-app.get('/expenses/group/:id', authenticateJWT, controllers.expenses.getByGroupId);
+app.get('/group/:id/expenses', authenticateJWT, controllers.expenses.getByGroupId);
 app.put('/expenses/:id', authenticateJWT, controllers.expenses.update);
 app.delete('/expenses/:id', authenticateJWT, controllers.expenses.delete);
 
 // debts
 
 app.post('/debts', authenticateJWT, controllers.debts.create);
-app.get('/debts/expense/:id', authenticateJWT, controllers.debts.getAll);
+app.get('/expenses/:id/debts', authenticateJWT, controllers.debts.getAll);
+app.get('/users/debts', authenticateJWT, controllers.debts.getByUserId)
 app.get('/debts/:id', authenticateJWT, controllers.debts.getById);
-app.put('/debts/:id', authenticateJWT, controllers.debts.update);
+app.patch('/debts/:id', authenticateJWT, controllers.debts.update);
 app.delete('/debts/:id', authenticateJWT, controllers.debts.delete);
 
 

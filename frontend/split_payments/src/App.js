@@ -2,10 +2,13 @@ import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import Login from './Login';
 import Register from './Register';
 import GroupLists from './components/GroupList';
+import Inicio from './components/Inicio';
 import GroupDetails from './components/GroupDetails';
 import GroupCreate from './components/GroupCreate';
 import RecoverPassword from './components/RecoverPassword'
 import ExpensesDetails from './components/ExpensesDetails';
+import DebtDetails from './components/DebtDetails';
+
 import axios from 'axios';
 
 import Navbar from './components/Navbar';
@@ -28,15 +31,17 @@ const App = () => {
   axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   return (
         <Routes>
-          <Route element={<Layout />}>
             <Route path='/' element={<Login />} />
             <Route path='/register' element={<Register />} />
             <Route path='/recover_password' element={<RecoverPassword />} />
+          <Route element={<Layout />}>
             <Route element={<ProtectedRoute token={token} />} >
               <Route path='/groups' element={<GroupLists />} />
+              <Route path='/inicio' element={<Inicio />} />
               <Route path='/groups/:id' element={<GroupDetails />} />
               <Route path='/groups/create' element={<GroupCreate />} />
               <Route path="/expenses/:id" element={<ExpensesDetails />} />
+              <Route path="/debts/:id" element={<DebtDetails />} />
             </Route>
           </Route>
         </Routes>

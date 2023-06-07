@@ -71,6 +71,32 @@ async function getDebtsByExpense(req, res) {
   }
 }
 
+async function getDebtsByUserId(req, res) {
+  const id = req.user.userId;
+  const all_debts = []
+  try {
+    const result = await pool.query(
+      'SELECT * FROM debts WHERE debtor_id = $1',
+      [id]
+    );
+
+    for (const debt of result.rows) {
+      const user = await pool.query(
+        'SELECT * FROM users WHERE id = $1',
+        [debt.creditor_id]
+      );
+
+      if (user) {
+        all_debts.push({ ...debt, creditor_mail: user.rows[0].email});
+      }
+    }
+
+    res.send(all_debts);
+  } catch (err) {
+    res.status(404).json({ message: 'Error retrieving debts', error: err });
+  }
+}
+
 async function getDebtById(req, res) {
   const { id } = req.params;
 
@@ -79,9 +105,13 @@ async function getDebtById(req, res) {
       'SELECT * FROM debts WHERE id = $1',
       [id]
     );
+    const user = await pool.query(
+      'SELECT * FROM users WHERE id = $1',
+      [result.rows[0].creditor_id]
+    );
 
     if (result.rows.length > 0) {
-      res.send(result.rows[0]);
+      res.send({ ...result.rows[0], creditor_email: user.rows[0].email});
     } else {
       res.status(404).json({ message: 'Debt not found' });
     }
@@ -129,4 +159,5 @@ module.exports = {
   getById: getDebtById,
   update: updateDebt,
   delete: deleteDebt,
+  getByUserId: getDebtsByUserId
 };

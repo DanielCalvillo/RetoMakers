@@ -15,7 +15,7 @@ const Navbar = () => {
           </div>
           <div className="flex">
             <a
-              href="#"
+              href="/inicio"
               className="text-gray-300 hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
             >
               Inicio
