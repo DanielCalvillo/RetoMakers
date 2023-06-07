@@ -25,7 +25,12 @@ function DebtDetails() {
   const handlePayClick = async () => {
     try {
       // Lógica para realizar el pago
-      console.log('Pago realizado');
+      const response = await axios.post(`${API}/create-checkout-session`, {
+        debt_id: debt.id
+      });
+
+      window.location.href = response.data.session_url;
+      console.log({ response })
     } catch (error) {
       console.error('Error al realizar el pago:', error);
     }
@@ -36,19 +41,20 @@ function DebtDetails() {
   }
 
   return (
-    <div className='p-4'>
-      <h2 className="text-2xl font-bold text-gray-800 mb-2">Detalles de la Deuda</h2>
-      <div className="bg-white shadow-lg rounded-lg overflow-hidden p-4">
-        <h3 className="text-lg font-bold text-gray-800 mb-2">Deuda a {debt.creditor_email}</h3>
-        <p className="text-gray-600 mb-4">Monto: ${debt.amount}</p>
-        <button
-          className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md"
-          onClick={handlePayClick}
-        >
-          Pagar
-        </button>
+      <div className='p-4'>
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">Detalles de la Deuda</h2>
+        <div className="bg-white shadow-lg rounded-lg overflow-hidden p-4">
+          <h3 className="text-lg font-bold text-gray-800 mb-2">Deuda a {debt.creditor_email}</h3>
+          <p className="text-gray-600 mb-4">Monto: ${debt.amount}</p>
+          <button
+            type="button"
+            className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md"
+            onClick={handlePayClick}
+          >
+            Pagar
+          </button>
+        </div>
       </div>
-    </div>
   );
 }
 

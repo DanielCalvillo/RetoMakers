@@ -76,7 +76,7 @@ async function getDebtsByUserId(req, res) {
   const all_debts = []
   try {
     const result = await pool.query(
-      'SELECT * FROM debts WHERE debtor_id = $1',
+      'SELECT * FROM debts WHERE debtor_id = $1 AND is_paid=false',
       [id]
     );
 
