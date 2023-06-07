@@ -11,7 +11,7 @@ function calculateTotalDebt(debts) {
 
 async function createDebt(req, res) {
   const { debtor_email, creditor_email, amount, expense_id } = req.body;
-  
+  console.log('entrando')
 
   try {
     const creditor = await pool.query(
@@ -52,6 +52,7 @@ async function createDebt(req, res) {
     }
 
   } catch (err) {
+    console.log(err)
     res.status(404).json({ message: 'Error creating debt', error: err });
   }
 }
@@ -59,13 +60,29 @@ async function createDebt(req, res) {
 async function getDebtsByExpense(req, res) {
   const { id } = req.params;
 
+  const all_debts = []
   try {
     const result = await pool.query(
       'SELECT * FROM debts WHERE expense_id = $1',
       [id]
     );
 
-    res.send(result.rows);
+    for (const debt of result.rows) {
+      const creditor = await pool.query(
+        'SELECT * FROM users WHERE id = $1',
+        [debt.creditor_id]
+      );
+      const debtor = await pool.query(
+        'SELECT * FROM users WHERE id = $1',
+        [debt.debtor_id]
+      );
+
+      if (creditor && debtor) {
+        all_debts.push({ ...debt, creditor_mail: creditor.rows[0].email, debtor_mail: debtor.rows[0].email});
+      }
+    }
+
+    res.send(all_debts);
   } catch (err) {
     res.status(404).json({ message: 'Error retrieving debts', error: err });
   }

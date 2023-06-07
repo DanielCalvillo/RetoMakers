@@ -102,7 +102,7 @@ async function createExpense(groupId, amount, description, date, creatorEmail, s
 
 async function getExpensesByGroupId(groupId) {
   try {
-    const response = await axios.get(`${API}/expenses/group/${groupId}`);
+    const response = await axios.get(`${API}/group/${groupId}/expenses`);
     const expenses = response.data.data;
     return expenses;
   } catch (error) {
