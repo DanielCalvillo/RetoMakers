@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { API } from './utils/consts';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -16,12 +17,12 @@ const Login = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3001/users/login', { email, password });
+      const response = await axios.post(`${API}/users/login`, { email, password });
       const token = response.data.data.token;
       // Almacena el token en el localStorage
       localStorage.setItem('token', token);
       // Redirige a la página principal
-      window.location.href = '/groupLists';
+      window.location.href = '/groupList';
     } catch (error) {
       console.error('Error al iniciar sesión:', error);
     }

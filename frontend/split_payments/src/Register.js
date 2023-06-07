@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+import { API } from './utils/consts';
+
 const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -21,7 +23,7 @@ const Register = () => {
     event.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:3001/users', { name, email, password });
+      const response = await axios.post(`${API}/users`, { name, email, password });
 
       if (response.status === 200) {
         // Registro exitoso

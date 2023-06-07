@@ -1,6 +1,7 @@
+require('dotenv').config()
 const express = require('express');
 const app = express();
-const port = 3001;
+const PORT = process.env.PORT;
 const cors = require('cors');
 
 
@@ -14,11 +15,6 @@ app.use(cors());
 
 // Middleware para analizar el cuerpo de la solicitud en formato JSON
 app.use(express.json());
-
-
-app.listen(port, () => {
-  console.log(`App listening at http://localhost:${port}`)
-});
 
 // users
 app.post('/users', controllers.users.create);
@@ -55,3 +51,7 @@ app.post('/groups/:groupId/members', authenticateJWT, controllers.group_members.
 app.get('/groups/:groupId/members', authenticateJWT, controllers.group_members.getAll);
 // app.get('/groups/:groupId/members/:memberId', authenticateJWT, controllers.group_members.getById);
 app.delete('/groups/:groupId/members', authenticateJWT, controllers.group_members.delete);
+
+app.listen(PORT, () => {
+  console.log(`App listening at http://localhost:${PORT}`)
+});

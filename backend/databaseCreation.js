@@ -1,17 +1,21 @@
+require('dotenv').config()
 const { Client } = require('pg');
 
 const client = new Client({
   // Estos son los detalles de tu base de datos
-  host: 'localhost',
-  port: 5432,
-  user: 'danielcalvillo',
-  password: '',
-  database: 'splitPayments'
+  host: process.env.SUPABASE_DB_HOST,
+  port:  process.env.SUPABASE_DB_PORT,
+  user: process.env.SUPABASE_DB_USER,
+  password: process.env.SUPABASE_DB_PASSWORD,
+  database: process.env.SUPABASE_DB_NAME
 });
 
-client.connect();
-
 const createTables = async () => {
+
+  await client.connect();
+  const res = await client.query('SELECT $1::text as message', ['Database up & running!'])
+  console.log(res.rows[0].message) // Hello world!
+
   await client.query(`
     CREATE TABLE users (
       id SERIAL PRIMARY KEY,
@@ -49,6 +53,8 @@ const createTables = async () => {
       expense_id INTEGER REFERENCES expenses(id)
     );
   `);
+
+    await client.end()
 };
 
 createTables();
