@@ -114,6 +114,85 @@ async function getDebtsByUserId(req, res) {
   }
 }
 
+async function getDebtsPayedByUserId(req, res) {
+  const id = req.user.userId;
+  const all_debts = []
+  try {
+    const result = await pool.query(
+      'SELECT * FROM debts WHERE debtor_id = $1 AND is_paid=true',
+      [id]
+    );
+
+    for (const debt of result.rows) {
+      const user = await pool.query(
+        'SELECT * FROM users WHERE id = $1',
+        [debt.creditor_id]
+      );
+
+      if (user) {
+        all_debts.push({ ...debt, creditor_mail: user.rows[0].email});
+      }
+    }
+
+    res.send(all_debts);
+  } catch (err) {
+    res.status(404).json({ message: 'Error retrieving debts', error: err });
+  }
+}
+
+async function getDebtsToBePayedByUserId(req, res) {
+  const id = req.user.userId;
+  const all_debts = []
+  try {
+    const result = await pool.query(
+      'SELECT * FROM debts WHERE creditor_id = $1 AND is_paid=true AND is_retrieved=false',
+      [id]
+    );
+
+    for (const debt of result.rows) {
+      const user = await pool.query(
+        'SELECT * FROM users WHERE id = $1',
+        [debt.debtor_id]
+      );
+
+      if (user) {
+        all_debts.push({ ...debt, debtor_mail: user.rows[0].email});
+      }
+    }
+
+    res.send(all_debts);
+  } catch (err) {
+    res.status(404).json({ message: 'Error retrieving debts', error: err });
+  }
+}
+
+
+async function getDebtsReceivedByUserId(req, res) {
+  const id = req.user.userId;
+  const all_debts = []
+  try {
+    const result = await pool.query(
+      'SELECT * FROM debts WHERE creditor_id = $1 AND is_paid=true AND is_retrieved=true',
+      [id]
+    );
+
+    for (const debt of result.rows) {
+      const user = await pool.query(
+        'SELECT * FROM users WHERE id = $1',
+        [debt.debtor_id]
+      );
+
+      if (user) {
+        all_debts.push({ ...debt, debtor_mail: user.rows[0].email});
+      }
+    }
+
+    res.send(all_debts);
+  } catch (err) {
+    res.status(404).json({ message: 'Error retrieving debts', error: err });
+  }
+}
+
 async function getDebtById(req, res) {
   const { id } = req.params;
 
@@ -176,5 +255,8 @@ module.exports = {
   getById: getDebtById,
   update: updateDebt,
   delete: deleteDebt,
-  getByUserId: getDebtsByUserId
+  getDebtsByUserId: getDebtsByUserId,
+  getDebtsPayedByUserId: getDebtsPayedByUserId,
+  getDebtsToBePayedByUserId: getDebtsToBePayedByUserId,
+  getDebtsReceivedByUserId: getDebtsReceivedByUserId
 };

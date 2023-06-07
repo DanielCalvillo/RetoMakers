@@ -121,7 +121,12 @@ app.delete('/expenses/:id', express.json(), authenticateJWT, controllers.expense
 
 app.post('/debts', express.json(), authenticateJWT, controllers.debts.create);
 app.get('/expenses/:id/debts', express.json(), authenticateJWT, controllers.debts.getAll);
-app.get('/users/debts', express.json(), authenticateJWT, controllers.debts.getByUserId)
+app.get('/users/debts', express.json(), authenticateJWT, controllers.debts.getDebtsByUserId)
+app.get('/users/debts/payed', express.json(), authenticateJWT, controllers.debts.getDebtsPayedByUserId)
+app.get('/users/debts/to_be_payed', express.json(), authenticateJWT, controllers.debts.getDebtsToBePayedByUserId)
+app.get('/users/debts/received', express.json(), authenticateJWT, controllers.debts.getDebtsReceivedByUserId)
+
+
 app.get('/debts/:id', express.json(), authenticateJWT, controllers.debts.getById);
 app.patch('/debts/:id', express.json(), authenticateJWT, controllers.debts.update);
 app.delete('/debts/:id', express.json(), authenticateJWT, controllers.debts.delete);

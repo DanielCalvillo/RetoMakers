@@ -7,16 +7,49 @@ import { API } from '../utils/consts';
 
 function Inicio() {
   const [debts, setDebts] = useState([]);
+  const [payedDebts, setPayedDebts] = useState([]);
+  const [toBePayedDebts, setToBePayedDebts] = useState([]);
+  const [ReceivedDebts, setReceivedDebts] = useState([]);
   const navigate = useNavigate()
 
   useEffect(() => {
     fetchDebts();
+    fetchPayedDebts();
+    fetchToBePayedDebts();
+    fetchReceivedDebts();
   }, []);
 
   const fetchDebts = async () => {
     try {
       const response = await axios.get(`${API}/users/debts`);
       setDebts(response.data);
+    } catch (error) {
+      console.error('Error fetching debts:', error);
+    }
+  };
+
+  const fetchPayedDebts = async () => {
+    try {
+      const response = await axios.get(`${API}/users/debts/payed`);
+      setPayedDebts(response.data);
+    } catch (error) {
+      console.error('Error fetching debts:', error);
+    }
+  };
+
+  const fetchToBePayedDebts = async () => {
+    try {
+      const response = await axios.get(`${API}/users/debts/to_be_payed`);
+      setToBePayedDebts(response.data);
+    } catch (error) {
+      console.error('Error fetching debts:', error);
+    }
+  };
+
+  const fetchReceivedDebts = async () => {
+    try {
+      const response = await axios.get(`${API}/users/debts/received`);
+      setReceivedDebts(response.data);
       console.log(response.data)
     } catch (error) {
       console.error('Error fetching debts:', error);
@@ -33,13 +66,18 @@ function Inicio() {
         <div className='flex items-center justify-between'>
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Deudas</h2>
         </div>
-        <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
           {debts.map((debt) => (
             <li
               key={debt.id}
               className="bg-white shadow-lg rounded-lg overflow-hidden"
             >
               <div className="p-4">
+                <p
+                  className="bg-red-500 text-white py-2 px-4 rounded-md text-center mb-4"
+                >
+                  SIN PAGAR
+                </p>
                 <h3 className="text-lg font-bold text-gray-800 mb-2">
                   Deuda a {debt.creditor_mail}
                 </h3>
@@ -52,7 +90,98 @@ function Inicio() {
               </div>
             </li>
           ))}
+          {debts.length < 1 && <p>No tienes deudas</p>}
+          
         </ul>
+        <div className='flex items-center justify-between'>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Deudas pagadas</h2>
+        </div>
+        <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+          {payedDebts.map((debt) => (
+            <li
+              key={debt.id}
+              className="bg-white shadow-lg rounded-lg overflow-hidden"
+            >
+              <div className="p-4">
+                <p
+                  className="bg-green-500 text-white py-2 px-4 rounded-md text-center mb-4"
+p                >
+                  PAGADA
+                </p>
+                <h3 className="text-lg font-bold text-gray-800 mb-2">
+                  Deuda a {debt.creditor_mail}
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  Monto: ${debt.amount}
+                </p>
+                <button className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md" onClick={() => handleDebtClick(debt.id)}>
+                  Ver detalles
+                </button>
+              </div>
+            </li>
+          ))}
+          {payedDebts.length < 1 && <p>No tienes deudas pagadas</p>}
+          
+        </ul>
+        <div className='flex items-center justify-between'>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Pagos por cobrar</h2>
+        </div>
+        <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+          {toBePayedDebts.map((debt) => (
+            <li
+              key={debt.id}
+              className="bg-white shadow-lg rounded-lg overflow-hidden"
+            >
+              <div className="p-4">
+                <p
+                  className="bg-red-500 text-white py-2 px-4 rounded-md text-center mb-4"
+                >
+                  PENDIENTE
+                </p>
+                <h3 className="text-lg font-bold text-gray-800 mb-2">
+                  Deuda de {debt.debtor_mail}
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  Monto: ${debt.amount}
+                </p>
+                <button className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md" onClick={() => handleDebtClick(debt.id)}>
+                  Ver detalles
+                </button>
+              </div>
+            </li>
+          ))}
+          {toBePayedDebts.length < 1 && <p>No Tienes pagos por cobrar</p>}
+        </ul>
+        <div className='flex items-center justify-between'>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Pagos cobrados</h2>
+        </div>
+        <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+          {ReceivedDebts.map((debt) => (
+            <li
+              key={debt.id}
+              className="bg-white shadow-lg rounded-lg overflow-hidden"
+            >
+              <div className="p-4">
+              <p
+                  className="bg-green-500 text-white py-2 px-4 rounded-md text-center mb-4"
+p                >
+                  PAGADO
+                </p>
+                <h3 className="text-lg font-bold text-gray-800 mb-2">
+                  Pago de {debt.debtor_mail}
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  Monto: ${debt.amount}
+                </p>
+                <button className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md" onClick={() => handleDebtClick(debt.id)}>
+                  Ver detalles
+                </button>
+              </div>
+            </li>
+          ))}
+          {ReceivedDebts.length < 1 && <p>No Tienes pagos cobrados</p>}
+        </ul>
+        
       </div>
     </div>
   );

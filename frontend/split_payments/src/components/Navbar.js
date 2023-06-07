@@ -32,12 +32,6 @@ const Navbar = () => {
             >
               Gastos
             </a>
-            <a
-              href="#"
-              className="text-gray-300 hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
-            >
-              Deudas
-            </a>
             <button
                 type="button"
                 onClick={handleLogout}
