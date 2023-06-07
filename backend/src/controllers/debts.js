@@ -1,5 +1,13 @@
 const { pool } = require('../../conection')
 
+function calculateTotalDebt(debts) {
+  let total = 0;
+  debts.forEach((debt) => {
+    total += parseFloat(debt.amount);
+  });
+  return total.toFixed(2);
+}
+
 
 async function createDebt(req, res) {
   const { debtor_email, creditor_email, amount, expense_id } = req.body;
@@ -16,16 +24,33 @@ async function createDebt(req, res) {
       [debtor_email]
     );
 
-    if (creditor.rows.length > 0 && debtor.rows.length) {
-      const result = await pool.query(
-        'INSERT INTO debts (debtor_id, creditor_id, amount, expense_id) VALUES ($1, $2, $3, $4) RETURNING *',
-        [debtor.rows[0].id, creditor.rows[0].id, amount, expense_id]
-      );
-      res.status(201).json({ data: result.rows[0] });
+    const expense = await pool.query(
+      'SELECT * FROM expenses WHERE id = $1',
+      [expense_id]
+    );
+
+    const debts_of_expense = await pool.query(
+      'SELECT * FROM debts WHERE expense_id = $1',
+      [expense_id]
+    );
+    const totalDebt = calculateTotalDebt(debts_of_expense.rows);
+
+    if (parseInt(totalDebt) + amount > parseInt(expense.rows[0].amount)) {
+      res.status(401).json({ message: 'The total debt is grater than the amount of the expense' });
     } else {
-      res.status(401).json({ message: 'User not found' });
+      if (creditor.rows.length > 0 && debtor.rows.length && expense.rows.length > 0) {
+        const result = await pool.query(
+          'INSERT INTO debts (debtor_id, creditor_id, amount, expense_id) VALUES ($1, $2, $3, $4) RETURNING *',
+          [debtor.rows[0].id, creditor.rows[0].id, amount, expense_id]
+        );
+        res.status(201).json({ data: result.rows[0] });
+      } else {
+        res.status(401).json({ message: 'Some of the values you submit was not found' });
+  
+      }
 
     }
+
   } catch (err) {
     res.status(404).json({ message: 'Error creating debt', error: err });
   }
