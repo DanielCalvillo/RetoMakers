@@ -7,7 +7,9 @@ import GroupDetails from './components/GroupDetails';
 import GroupCreate from './components/GroupCreate';
 import RecoverPassword from './components/RecoverPassword'
 import ExpensesDetails from './components/ExpensesDetails';
+import Expenses from './components/Expenses';
 import DebtDetails from './components/DebtDetails';
+import Debts from './components/Debts';
 
 import axios from 'axios';
 
@@ -40,7 +42,9 @@ const App = () => {
               <Route path='/inicio' element={<Inicio />} />
               <Route path='/groups/:id' element={<GroupDetails />} />
               <Route path='/groups/create' element={<GroupCreate />} />
+              <Route path="/expenses" element={<Expenses />} />
               <Route path="/expenses/:id" element={<ExpensesDetails />} />
+              <Route path="/debts" element={<Debts />} />
               <Route path="/debts/:id" element={<DebtDetails />} />
             </Route>
           </Route>

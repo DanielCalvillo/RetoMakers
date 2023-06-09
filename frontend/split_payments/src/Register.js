@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-
+import { useNavigate } from 'react-router-dom';
 import { API } from './utils/consts';
 
 const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate()
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -26,25 +28,21 @@ const Register = () => {
       const response = await axios.post(`${API}/users`, { name, email, password });
 
       if (response.status === 200) {
-        // Registro exitoso
-        console.log('Registro exitoso');
+
         const token = response.data.data;
-        // Almacena el token en el localStorage
         localStorage.setItem('token', token);
-        // Redirige a la página principal
-        window.location.href = '/groups';
+
+        navigate(`/inicio`)
       } else {
-        // Registro fallido
-        console.error('Error al registrar');
+        setErrorMessage('Error inesperado al registrar usuario')
       }
     } catch (error) {
-      console.error('Error en la solicitud de registro', error);
+      setErrorMessage('Error inesperado al registrar usuario')
     }
   };
 
   const handleLogin = () => {
-    // Redirige al formulario de registro
-    window.location.href = '/';
+    navigate(`/`)
   };
 
   return (
@@ -60,11 +58,12 @@ const Register = () => {
             <label htmlFor="email" className="block mb-1 font-medium">Email:</label>
             <input type="email" id="email" name="email" value={email} onChange={handleInputChange} className="border border-gray-300 rounded-md p-2 w-full" />
           </div>
-          <div className="mb-4">
+          <div className="mb-2">
             <label htmlFor="password" className="block mb-1 font-medium">Contraseña:</label>
             <input type="password" id="password" name="password" value={password} onChange={handleInputChange} className="border border-gray-300 rounded-md p-2 w-full" />
           </div>
-          <div className="flex items-center justify-between">
+          {errorMessage && <p className="text-red-500 mt-1">{errorMessage}</p>}
+          <div className="flex items-center justify-between mt-6" >
             <button type="submit" className="bg-blue-500 text-white rounded-md py-2 px-4 hover:bg-blue-600">Registrarse</button>
             <button
                 className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"

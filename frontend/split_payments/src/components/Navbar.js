@@ -27,15 +27,21 @@ const Navbar = () => {
               Grupos
             </a>
             <a
-              href="#"
+              href="/expenses"
               className="text-gray-300 hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
             >
               Gastos
             </a>
+            <a
+              href="/debts"
+              className="text-gray-300 hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+            >
+              Deudas
+            </a>
             <button
                 type="button"
                 onClick={handleLogout}
-                className="bg-red-500 hover:bg-red-600 text-white py-1 px-4 rounded-md"
+                className="bg-red-500 hover:bg-red-600 text-white py-1 px-4 rounded-md ml-2"
               >
                 Log Out
               </button>

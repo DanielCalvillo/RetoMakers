@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { API } from '../utils/consts';
+import { useNavigate } from 'react-router-dom';
 
 const RecoverPassword = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate()
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -23,18 +26,17 @@ const RecoverPassword = () => {
     event.preventDefault();
     try {
       if (password === confirmPassword) {
-        const response = await axios.post(`${API}/users/recover_password`, {
+        await axios.post(`${API}/users/recover_password`, {
           email,
           newPassword: password
         });
-        console.log('Password recovery successful:', response.data);
-        // Redirige a la página de inicio de sesión
-        window.location.href = '/';
+        navigate(`/`)
 
       } else {
-        console.error('Las contraseñas no coinciden')
+        setErrorMessage('Las contraseñas no coinciden')
       }
     } catch (error) {
+      setErrorMessage('Usuario no encontrado')
       console.error('Error en la recuperación de contraseña:', error);
     }
   };
@@ -71,7 +73,7 @@ const RecoverPassword = () => {
               required
             />
           </div>
-          <div className="mb-6">
+          <div className="mb-3">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirmPassword">
               Confirm New Password
             </label>
@@ -85,7 +87,9 @@ const RecoverPassword = () => {
               required
             />
           </div>
-          <div className="flex items-center justify-between">
+          {errorMessage && <p className="text-red-500 mt-1">{errorMessage}</p>}
+
+          <div className="flex items-center justify-between mt-6">
             <button
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit"

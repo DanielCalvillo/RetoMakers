@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { API } from './utils/consts';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate()
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -19,24 +22,23 @@ const Login = () => {
     try {
       const response = await axios.post(`${API}/users/login`, { email, password });
       const token = response.data.data.token;
-      // Almacena el token en el localStorage
+
       localStorage.setItem('token', token);
-      // Redirige a la página principal
-      // TODO: Redireccionar con React Router no con windows
-      window.location.href = '/groups';
+
+      setErrorMessage('')
+      navigate(`/inicio`)
     } catch (error) {
+      setErrorMessage('Usuario o contraseña incorrecta')
       console.error('Error al iniciar sesión:', error);
     }
   };
 
   const handleRegister = () => {
-    // Redirige al formulario de registro
-    window.location.href = '/register';
+    navigate(`/register`)
   };
 
   const handleRecoverPassword = () => {
-    // Redirige a la página de recuperar contraseña
-    window.location.href = '/recover_password';
+    navigate(`/recover_password`)
   };
 
   return (
@@ -57,7 +59,7 @@ const Login = () => {
               required
             />
           </div>
-          <div className="mb-6">
+          <div className="mb-1">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
               Password
             </label>
@@ -71,7 +73,8 @@ const Login = () => {
               required
             />
           </div>
-          <div className="flex items-center justify-between">
+          {errorMessage && <p className="text-red-500 mt-1">{errorMessage}</p>}
+          <div className="flex items-center justify-between mt-6">
             <button
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit"
