@@ -95,6 +95,9 @@ app.post('/create-checkout-session', express.json(), async (req, res) => {
   res.status(200).json({ session_url: session.url });
 })
 
+// Stripe
+app.get('/stripe_account_link', express.json(), authenticateJWT, controllers.users.getAccountLink);
+
 // users
 app.post('/users', express.json(), controllers.users.create);
 app.post('/users/login', express.json(), controllers.users.login);

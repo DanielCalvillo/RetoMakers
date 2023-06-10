@@ -5,6 +5,7 @@ import { API } from './utils/consts';
 
 const Register = () => {
   const [name, setName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -18,17 +19,32 @@ const Register = () => {
       setEmail(value);
     } else if (name === 'password') {
       setPassword(value);
+    } else if (name === 'last_name') {
+      setLastName(value);
     }
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    console.log("user to create",{ 
+      first_name: name, 
+      last_name: lastName,
+      email, 
+      password 
+    })
+
     try {
-      const response = await axios.post(`${API}/users`, { name, email, password });
+      const response = await axios.post(`${API}/users`, 
+        { 
+          first_name: name, 
+          last_name: lastName,
+          email, 
+          password 
+        }
+      );
 
       if (response.status === 200) {
-
         const token = response.data.data;
         localStorage.setItem('token', token);
 
@@ -52,15 +68,47 @@ const Register = () => {
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="name" className="block mb-1 font-medium">Nombre:</label>
-            <input type="text" id="name" name="name" value={name} onChange={handleInputChange} className="border border-gray-300 rounded-md p-2 w-full" />
+            <input 
+              className="border border-gray-300 rounded-md p-2 w-full"  
+              type="text" 
+              id="name" 
+              name="name" 
+              value={name} 
+              onChange={handleInputChange} 
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="name" className="block mb-1 font-medium">Apellido:</label>
+            <input 
+              className="border border-gray-300 rounded-md p-2 w-full"
+              type="text" 
+              id="last_name" 
+              name="last_name" 
+              value={lastName} 
+              onChange={handleInputChange} 
+            />
           </div>
           <div className="mb-4">
             <label htmlFor="email" className="block mb-1 font-medium">Email:</label>
-            <input type="email" id="email" name="email" value={email} onChange={handleInputChange} className="border border-gray-300 rounded-md p-2 w-full" />
+            <input 
+              className="border border-gray-300 rounded-md p-2 w-full"
+              type="email" 
+              id="email" 
+              name="email" 
+              value={email} 
+              onChange={handleInputChange} 
+            />
           </div>
           <div className="mb-2">
             <label htmlFor="password" className="block mb-1 font-medium">Contraseña:</label>
-            <input type="password" id="password" name="password" value={password} onChange={handleInputChange} className="border border-gray-300 rounded-md p-2 w-full" />
+            <input 
+              className="border border-gray-300 rounded-md p-2 w-full"
+              type="password" 
+              id="password" 
+              name="password" 
+              value={password} 
+              onChange={handleInputChange} 
+            />
           </div>
           {errorMessage && <p className="text-red-500 mt-1">{errorMessage}</p>}
           <div className="flex items-center justify-between mt-6" >

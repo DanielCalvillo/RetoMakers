@@ -1,28 +1,108 @@
 const { pool } = require('../../conection')
 const jwt = require('jsonwebtoken');
 
-// TODO: Cambiar a variable de entorno
-const secretKey = 'tu_clave_secreta';
+// TODO: Modularizar token generation
+const secretKey = process.env.SPLIT_SECRET_KEY;
 
+// TODO: Modularizar stripe API calls
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+async function getAccountLinkController(req, res) {
+  const userId = req.user.userId;
+  const { type } = req.params;
+
+  let user = null;
+
+  try {
+    const pgRes = await pool.query('SELECT * FROM users WHERE id = $1', [userId]);
+    user = pgRes.rows[0]
+  } catch(err) {
+    return res.status(404).json({ message: err.message });
+  }
+
+  if (!user) {
+    return res.status(404).json({ message: 'user not found' });
+  }
+  
+  const accountLink = await stripe.accountLinks.create({
+    account: user.stripe_id,
+    refresh_url: 'https://example.com/reauth',
+    return_url: 'https://example.com/return',
+    type: type ? type : 'account_onboarding',
+  });
+
+  return res.status(200).json({ link: accountLink });
+}
 
 async function createUserController(req, res) {
-  const { name, email, password } = req.body;
+  const { first_name, last_name, email, password } = req.body;
 
   let user;
 
   try {
-    user = await pool.query(
-      'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *',
-      [name, email, password]
+    let dbRes = await pool.query(
+      'INSERT INTO users (name, email, password, first_name, last_name) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [`${first_name} ${last_name}`, email, password, first_name, last_name]
     );
-    if (user) {
-      const token = jwt.sign({ userId: user.rows[0].id }, secretKey);
-      return res.status(200).json({ data: token }); 
-    }
+
+    user = dbRes.rows[0];
+
+    const token = jwt.sign({ userId: user.id }, secretKey);
+
+    // Create Stripe account after user creation
+    const account = await stripe.accounts.create({
+      type: 'custom',
+      country: 'MX',
+      email: email,
+      // This is necesary if individual is not null
+      business_type: 'individual',
+      individual: {
+        first_name: first_name,
+        last_name: last_name,
+        email: email,
+
+      },
+      capabilities: {
+        card_payments: {requested: true},
+        transfers: {requested: true},
+        oxxo_payments: {requested: true}
+      },
+      metadata: {
+        split_id: user.id // Assuming that you want to use the user's id in your platform as the split_id
+      },
+      settings: {
+        payouts: {
+          schedule: {
+            interval: 'manual',
+          },
+        },
+      },
+    });
+
+    const accountLink = await stripe.accountLinks.create({
+      account: account.id,
+      refresh_url: 'https://example.com/reauth',
+      return_url: 'https://example.com/return',
+      type: 'account_onboarding',
+    });
+
+    // Add Stripe account id to the token data
+    token.stripeAccountId = account.id;
+
+    dbRes = await pool.query(
+      "UPDATE users SET stripe_id = $1 WHERE id = $2 RETURNING *;",
+      [account.id, user.id]
+    );
+
+    user = dbRes.rows[0]
+
+    return res.status(200).json({ user, data: token, account, account_link: accountLink }); 
   } catch (err) {
-    return res.status(404).json({ message: 'Error creating user', error: err });
+    console.error(err);
+    return res.status(404).json({ message: 'Error creating user', error: err.message });
   }
 }
+
 
 async function loginUser(req, res) {
   const { email, password } = req.body;
@@ -136,5 +216,6 @@ module.exports = {
   login: loginUser,
   editUser: editUser,
   getUser: getUserData,
-  recoverPassword: recoverPassword
+  recoverPassword: recoverPassword,
+  getAccountLink: getAccountLinkController
 };
