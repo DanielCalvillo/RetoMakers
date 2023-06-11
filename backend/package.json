@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./index.js",
     "dev": "nodemon ./index.js",
-    "database:create": "node ./databaseCreation.js"
+    "database:create": "node ./databaseCreation.js",
+    "heroku-prebuild": "cd backend && npm install"
   },
   "author": "",
   "license": "ISC",
