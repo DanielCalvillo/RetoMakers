@@ -35,7 +35,7 @@ async function getAccountLinkController(req, res) {
 }
 
 async function createUserController(req, res) {
-  const { first_name, last_name, email, password } = req.body;
+  const { first_name, last_name, email, password, refresh_url, return_url } = req.body;
 
   let user;
 
@@ -51,7 +51,7 @@ async function createUserController(req, res) {
 
     // Create Stripe account after user creation
     const account = await stripe.accounts.create({
-      type: 'custom',
+      type: 'express',
       country: 'MX',
       email: email,
       // This is necesary if individual is not null
@@ -73,6 +73,7 @@ async function createUserController(req, res) {
       settings: {
         payouts: {
           schedule: {
+            // This will hold all the money until the account wants to retrieve it
             interval: 'manual',
           },
         },
@@ -81,8 +82,8 @@ async function createUserController(req, res) {
 
     const accountLink = await stripe.accountLinks.create({
       account: account.id,
-      refresh_url: 'https://example.com/reauth',
-      return_url: 'https://example.com/return',
+      refresh_url,
+      return_url,
       type: 'account_onboarding',
     });
 

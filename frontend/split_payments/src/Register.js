@@ -27,28 +27,23 @@ const Register = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    console.log("user to create",{ 
-      first_name: name, 
-      last_name: lastName,
-      email, 
-      password 
-    })
-
     try {
       const response = await axios.post(`${API}/users`, 
         { 
           first_name: name, 
           last_name: lastName,
           email, 
-          password 
+          password,
+          return_url: 'http://localhost:3000/inicio',
+          refresh_url: 'http://localhost:3000/inicio'
         }
       );
 
       if (response.status === 200) {
         const token = response.data.data;
         localStorage.setItem('token', token);
-
-        navigate(`/inicio`)
+        console.log(response.data.account_link.url)
+        window.location.replace(response.data.account_link.url);
       } else {
         setErrorMessage('Error inesperado al registrar usuario')
       }
