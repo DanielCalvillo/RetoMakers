@@ -10,6 +10,7 @@ function Inicio() {
   const [payedDebts, setPayedDebts] = useState([]);
   const [toBePayedDebts, setToBePayedDebts] = useState([]);
   const [ReceivedDebts, setReceivedDebts] = useState([]);
+  const [balance, setBalance] = useState('')
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -31,6 +32,11 @@ function Inicio() {
   const fetchPayedDebts = async () => {
     try {
       const response = await axios.get(`${API}/users/debts/payed`);
+      console.log(response.data)
+      let totalAmount = response.data.reduce((total, item) => {
+        return total + parseFloat(item.amount);
+      }, 0);
+      setBalance(totalAmount)
       setPayedDebts(response.data);
     } catch (error) {
       console.error('Error fetching debts:', error);
@@ -95,6 +101,7 @@ function Inicio() {
         </ul>
         <div className='flex items-center justify-between'>
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Deudas pagadas</h2>
+          <h2 className='text-2xl font-bold text-gray-800 mb-2'>BALANCE: ${balance}</h2>
         </div>
         <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
           {payedDebts.map((debt) => (
